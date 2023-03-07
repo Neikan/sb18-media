@@ -28,7 +28,7 @@ class UiText extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: color ?? Colors.grey[800],
+          color: color ?? Colors.white,
           fontSize: fontSize ?? 14,
           fontWeight: fontWeight,
         ),

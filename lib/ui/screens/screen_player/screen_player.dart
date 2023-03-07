@@ -1,6 +1,10 @@
 // Flutter imports:
-import 'package:app_media/ui/components/ui_loader.dart';
+import 'dart:async';
+
+import 'package:app_media/ui/components/ui_button.dart';
+import 'package:app_media/ui/components/ui_text.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // Package imports:
 import 'package:video_player/video_player.dart';
@@ -8,6 +12,11 @@ import 'package:video_player/video_player.dart';
 // Project imports:
 import 'package:app_media/consts/urls.dart';
 import 'package:app_media/ui/components/ui_header.dart';
+import 'package:app_media/ui/components/ui_loader.dart';
+
+part 'components/ui_button_play.dart';
+part 'components/ui_controls.dart';
+part 'components/ui_slider.dart';
 
 class ScreenPlayer extends StatefulWidget {
   const ScreenPlayer({super.key});
@@ -23,94 +32,31 @@ class _ScreenPlayerState extends State<ScreenPlayer> {
   void initState() {
     super.initState();
 
-    _controller = VideoPlayerController.network(videoUrl);
     // _controller = VideoPlayerController.asset(videoLocal);
-
-    _controller.addListener(() {
-      setState(() {});
-    });
-
-    _controller.setLooping(true);
-    _controller.initialize().then((_) => setState(() {}));
-    _controller.play();
+    _controller = VideoPlayerController.network(videoUrl)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..setLooping(true)
+      ..initialize().then((_) => setState(() {}))
+      ..play();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const UiHeader(
-        title: 'Player',
-      ),
+      backgroundColor: Colors.black,
+      appBar: const UiHeader(title: 'Player'),
       body: SafeArea(
         child: _controller.value.isInitialized
-            ? Stack(
-                children: [
-                  AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    child: Stack(
-                      children: [
-                        VideoPlayer(_controller),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: VideoProgressIndicator(
-                            _controller,
-                            allowScrubbing: true,
-                            colors: VideoProgressColors(
-                              backgroundColor: Colors.green.shade100,
-                              bufferedColor: Colors.green.shade200,
-                              playedColor: Colors.green,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            right: 16.0,
-                            bottom: 16,
-                            left: 16.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16.0),
-                                color: Colors.green.withOpacity(0.5),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    onPressed: () => _controller.seekTo(
-                                      Duration(
-                                        seconds: _controller
-                                                .value.position.inSeconds -
-                                            10,
-                                      ),
-                                    ),
-                                    icon: const Icon(Icons.replay_10),
-                                  ),
-                                  _controller.value.isPlaying
-                                      ? IconButton(
-                                          onPressed: _controller.pause,
-                                          icon: const Icon(Icons.pause),
-                                        )
-                                      : IconButton(
-                                          onPressed: _controller.play,
-                                          icon: const Icon(Icons.play_arrow),
-                                        ),
-                                  IconButton(
-                                    onPressed: () => _controller
-                                        .seekTo(const Duration(seconds: 10)),
-                                    icon: const Icon(Icons.forward_10),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+            ? AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: Stack(
+                  children: [
+                    VideoPlayer(_controller),
+                    UiControls(controller: _controller),
+                  ],
+                ),
               )
             : const UiLoader(),
       ),

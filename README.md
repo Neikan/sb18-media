@@ -15,14 +15,6 @@ flutter pub run import_sorter:main
 
 <br />
 
-# Generate files
-#### Models and etc.:
-```sh
-flutter packages pub run build_runner build --delete-conflicting-outputs
-```
-
-<br />
-
 # Модуль 18. Media, cards, webview
 
 #### Задание
